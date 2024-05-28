@@ -3,27 +3,30 @@ import {Component} from 'react'
 import './index.css'
 
 class Stopwatch extends Component {
-  state = {timeInSeconds: 0}
+  state = {isTimerRunning: false, timeInSeconds: 0}
 
   componentWillUnmount() {
     clearInterval(this.intervalId)
+    console.log('component will unmount')
   }
 
-  clickOnStartBtn = () => {
-    this.intervalId = setInterval(this.startTimer, 1000)
+  clickOnResetBtn = () => {
+    clearInterval(this.intervalId)
+    this.setState({isTimerRunning: false, timeInSeconds: 0})
   }
 
   startTimer = () => {
     this.setState(prevState => ({timeInSeconds: prevState.timeInSeconds + 1}))
   }
 
-  clickOnStopBtn = () => {
-    clearInterval(this.intervalId)
+  clickOnStartBtn = () => {
+    this.intervalId = setInterval(this.startTimer, 1000)
+    this.setState({isTimerRunning: true})
   }
 
-  clickOnResetBtn = () => {
+  clickOnStopBtn = () => {
     clearInterval(this.intervalId)
-    this.setState({timeInSeconds: 0})
+    this.setState({isTimerRunning: false})
   }
 
   timerStartsRunning = () => {
@@ -36,7 +39,8 @@ class Stopwatch extends Component {
   }
 
   render() {
-    console.log(this)
+    console.log(this.timerStartsRunning())
+    const {isTimerRunning} = this.state
     const jsxElement = (
       <div className="stopwatch-bg-container">
         <div className="stopwatch-sub-container">
@@ -48,16 +52,15 @@ class Stopwatch extends Component {
                 alt="stopwatch"
                 className="timer-image"
               />
-              <h1>Timer</h1>
+              <p className="heading">Timer</p>
             </div>
-            <div className="count-container">
-              <h1>{this.timerStartsRunning()}</h1>
-            </div>
+            <h1 className="count-container">{this.timerStartsRunning()}</h1>
             <div className="action-buttons-container">
               <button
                 type="button"
                 className="button-styles start-btn"
                 onClick={this.clickOnStartBtn}
+                disabled={isTimerRunning}
               >
                 Start
               </button>
